@@ -115,6 +115,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.groupBox18.SuspendLayout();
             this.groupBox17.SuspendLayout();
             this.groupBox16.SuspendLayout();
@@ -153,7 +155,7 @@
             this.textBox36.Name = "textBox36";
             this.textBox36.Size = new System.Drawing.Size(42, 20);
             this.textBox36.TabIndex = 26;
-            this.textBox36.Text = "13";
+            this.textBox36.Text = "15";
             this.textBox36.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBox37
@@ -162,12 +164,11 @@
             this.textBox37.Name = "textBox37";
             this.textBox37.Size = new System.Drawing.Size(42, 20);
             this.textBox37.TabIndex = 25;
-            this.textBox37.Text = "3";
+            this.textBox37.Text = "16";
             this.textBox37.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBox38
             // 
-            this.textBox38.Enabled = false;
             this.textBox38.Location = new System.Drawing.Point(249, 61);
             this.textBox38.Name = "textBox38";
             this.textBox38.Size = new System.Drawing.Size(74, 20);
@@ -177,7 +178,6 @@
             // 
             // textBox39
             // 
-            this.textBox39.Enabled = false;
             this.textBox39.Location = new System.Drawing.Point(249, 19);
             this.textBox39.Name = "textBox39";
             this.textBox39.Size = new System.Drawing.Size(74, 20);
@@ -709,7 +709,7 @@
             this.textBox30.Name = "textBox30";
             this.textBox30.Size = new System.Drawing.Size(42, 20);
             this.textBox30.TabIndex = 26;
-            this.textBox30.Text = "13";
+            this.textBox30.Text = "15";
             this.textBox30.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBox29
@@ -718,12 +718,11 @@
             this.textBox29.Name = "textBox29";
             this.textBox29.Size = new System.Drawing.Size(42, 20);
             this.textBox29.TabIndex = 25;
-            this.textBox29.Text = "3";
+            this.textBox29.Text = "16";
             this.textBox29.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBox28
             // 
-            this.textBox28.Enabled = false;
             this.textBox28.Location = new System.Drawing.Point(249, 52);
             this.textBox28.Name = "textBox28";
             this.textBox28.Size = new System.Drawing.Size(74, 20);
@@ -733,7 +732,6 @@
             // 
             // textBox27
             // 
-            this.textBox27.Enabled = false;
             this.textBox27.Location = new System.Drawing.Point(249, 18);
             this.textBox27.Name = "textBox27";
             this.textBox27.Size = new System.Drawing.Size(74, 20);
@@ -1090,11 +1088,33 @@
             this.comboBox2.TabIndex = 49;
             this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(476, 424);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(139, 23);
+            this.button1.TabIndex = 50;
+            this.button1.Text = "Calibration And Check";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(476, 452);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(139, 23);
+            this.button2.TabIndex = 51;
+            this.button2.Text = "Stop Music";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1266, 482);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -1240,6 +1260,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
     }
 }
 

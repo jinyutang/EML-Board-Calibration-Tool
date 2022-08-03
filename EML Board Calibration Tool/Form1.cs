@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -647,7 +642,10 @@ namespace EML_Board_Calibration_Tool
 
 			if (button65.Text.Equals("Start"))
 			{
-				EML_LOG.Text = "";
+				EML_LOG.Invoke((Action)delegate
+				{
+					EML_LOG.Clear();
+				});
 				EML_Floor = textBox35.Text;
 
 				EML_Voltage_GPIP_Address = "GPIB0::" + textBox37.Text + "::INSTR";
@@ -666,10 +664,17 @@ namespace EML_Board_Calibration_Tool
 
 				EMLtasktokenSource.Token.Register(() => {
 					Console.WriteLine("Task is to cancel.");
-					button65.Text = "Start";
+					EML_LOG.Invoke((Action)delegate
+					{
+						button65.Text = "Start";
+					});
 				});
 				EMLtask.Start();
-				button65.Text = "Stop";
+				EML_LOG.Invoke((Action)delegate
+				{
+					button65.Text = "Stop";
+				});
+				
 			}
 			else
 			{
@@ -678,8 +683,10 @@ namespace EML_Board_Calibration_Tool
 					EMLtasktokenSource.Cancel();
 				}
 				EMLtask = null;
-
-				button65.Text = "Start";
+				EML_LOG.Invoke((Action)delegate
+				{
+					button65.Text = "Start";
+				});
 			}
 		}
 
@@ -812,7 +819,11 @@ namespace EML_Board_Calibration_Tool
 
 						Keithley2401OutPutOFF(gPIB_V, gPIB_A);
 					}
+
+					EML_Save_Check_Log(boardIndex);
 				}
+
+				SoundPlay.Play();
 			}
 			catch (Exception e)
 			{
@@ -829,8 +840,8 @@ namespace EML_Board_Calibration_Tool
 				});
 			}
 			Console.WriteLine("DoEMLAutoCheck finished. ");
-			EML_Save_Check_Log();
-			MessageBox.Show("Done!");
+			
+			//MessageBox.Show("Done!");
 			return;
 		}
 
@@ -914,9 +925,9 @@ namespace EML_Board_Calibration_Tool
 			//记录测量值
 			EML_LOG.Invoke((Action)delegate
 			{
-				EML_LOG.AppendText(String.Format("Board {0} votage calibration channel {1} tagert votage:{2}mV votage read from keithley：{3}mV" + Environment.NewLine, boardIndex, channel + 1, EML_VotageCheckPoints[1], readGPIB));
+				EML_LOG.AppendText(String.Format("Board {0} votage check channel {1} tagert votage:{2}mV votage read from keithley：{3}mV" + Environment.NewLine, boardIndex, channel + 1, EML_VotageCheckPoints[1], readGPIB));
 			});
-			EML_Check_Votage_Current.Add(String.Format("Board,{0},Voltage Channel,{1},Votage Target,{2},mV,Voltage Measure,{3},mV,{4}" + Environment.NewLine, boardIndex, channel + 1, EML_VotageCheckPoints[1], readGPIB, readGPIB > -2900 || readGPIB < -3100 ? "Fail" : "Pass"));
+			EML_Check_Votage_Current.Add(String.Format("Board,{0},Voltage Channel,{1},Votage Target,{2},mV,Voltage Measure,{3},mV,{4}" + Environment.NewLine, boardIndex, channel + 1, EML_VotageCheckPoints[1], readGPIB, readGPIB > (int)(float.Parse(EML_VotageCheckPoints[1]) + 100) || readGPIB < (int)(float.Parse(EML_VotageCheckPoints[1]) - 100) ? "Fail" : "Pass"));
 
 
 			//电源板设置电压输出0V
@@ -1012,9 +1023,9 @@ namespace EML_Board_Calibration_Tool
 			//记录测量值
 			EML_LOG.Invoke((Action)delegate
 			{
-				EML_LOG.AppendText(String.Format("Board {0} current calibration channel {1} tagert current:{2}mA read current from keithley：{3}mA" + Environment.NewLine, boardIndex, channel + 1, EML_CurrentCheckPoints[1], readGPIB));
+				EML_LOG.AppendText(String.Format("Board {0} current check channel {1} tagert current:{2}mA read current from keithley：{3}mA" + Environment.NewLine, boardIndex, channel + 1, EML_CurrentCheckPoints[1], readGPIB));
 			});
-			EML_Check_Votage_Current.Add(String.Format("Board,{0},Current Channel,{1},Current Target,{2},mA,Current Measure,{3},mA,{4}" + Environment.NewLine, boardIndex, channel + 1, EML_CurrentCheckPoints[1], readGPIB, readGPIB > 175 || readGPIB < 165 ? "Fail" : "Pass"));
+			EML_Check_Votage_Current.Add(String.Format("Board,{0},Current Channel,{1},Current Target,{2},mA,Current Measure,{3},mA,{4}" + Environment.NewLine, boardIndex, channel + 1, EML_CurrentCheckPoints[1], readGPIB, readGPIB > (int)(float.Parse(EML_CurrentCheckPoints[1]) + 5) || readGPIB < (int)(float.Parse(EML_CurrentCheckPoints[1]) - 5) ? "Fail" : "Pass"));
 
 
 			//校准完成了，把电源板切换成电压模式，0v，关闭输出
@@ -1048,14 +1059,15 @@ namespace EML_Board_Calibration_Tool
 		}
 
 
-		private void EML_Save_Check_Log()
+		private void EML_Save_Check_Log(string boardIndex)
 		{
-			string filename = @"log\EML_Check_" + EML_Floor + " " + DateTime.Now.ToString("yyyy_MM_dd HH_mm_ss") + ".csv";
+			string filename = @"log\EML_Check_" + EML_Floor + "_" + boardIndex + " " + DateTime.Now.ToString("yyyy_MM_dd HH_mm_ss") + ".csv";
 
 			foreach (string s in EML_Check_Votage_Current)
 			{
 				File.AppendAllText(filename, s);
 			}
+
 
 		}
 
@@ -1246,6 +1258,8 @@ namespace EML_Board_Calibration_Tool
 
 						Keithley2401OutPutOFF(gPIB_V, gPIB_A);
 					}
+
+					EML_Calibration_K_B_Log(boardIndex);
 				}
 			}
 			catch (Exception e)
@@ -1263,8 +1277,9 @@ namespace EML_Board_Calibration_Tool
 				});
 			}
 			Console.WriteLine("DoEMLAutoCalibration finished. ");
-			EML_Calibration_K_B_Log();
-			MessageBox.Show("Done!");
+			
+			
+			calibrationFinishFlag = true;
 			return;
 		}
 
@@ -1621,9 +1636,9 @@ namespace EML_Board_Calibration_Tool
 			EML_Calibration_K_B.Add(String.Format("Board,{0},Current Channel,{1},K,{2},B,{3},Default Current,{4},mA" + Environment.NewLine, boardIndex, channel + 1, EML_K_difference, EML_B_difference, readGPIB));
 		}
 
-		private void EML_Calibration_K_B_Log()
+		private void EML_Calibration_K_B_Log(string board)
 		{
-			string filename = @"log\EML_Calibration_" + EML_Floor + " " + DateTime.Now.ToString("yyyy_MM_dd HH_mm_ss") + ".csv";
+			string filename = @"log\EML_Calibration_" + EML_Floor + "_" + board + " " + DateTime.Now.ToString("yyyy_MM_dd HH_mm_ss") + ".csv";
 
 			foreach (string s in EML_Calibration_K_B)
 			{
@@ -1682,6 +1697,7 @@ namespace EML_Board_Calibration_Tool
 			comboBox1.SelectedIndex = 1;
 			comboBox2.SelectedIndex = 1;
 
+			
 		}
 
 		int keithleyTypeVotage = 1;
@@ -1855,5 +1871,32 @@ namespace EML_Board_Calibration_Tool
         {
 			return string.Format("Total Time {0} Start {1} end {2}", (DateTime.Now - MarkTime).ToString("c").Split('.')[0], MarkTime.ToString("HH:mm:ss"), DateTime.Now.ToString("HH:mm:ss")) ;
 		}
-	}
+		bool calibrationFinishFlag = false;
+		private void button1_Click(object sender, EventArgs e)
+        {
+			calibrationFinishFlag = false;
+			button60_Click(null, null) ;
+
+			Task t = new Task(() => {
+				while (true)
+				{
+					if (calibrationFinishFlag)
+					{
+						button65_Click(null, null);
+						break;
+					}
+					Thread.Sleep(3000);
+				}
+				calibrationFinishFlag = false;
+			});
+            
+			t.Start();
+
+		}
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+			SoundPlay.Stop();
+        }
+    }
 }
